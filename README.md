@@ -29,32 +29,22 @@ apply the MutualFormer on different multi-modality learning tasks
 More results on other tasks can be found in the paper. The saliency maps produced by MutualFormer-based RGB-D SOD method can be downloaded in Baidu Drive [RGBD_SOD_Results](https://pan.baidu.com/s/1hsypcBSrfOcrZz9u0tNJAA)(password: 5jdf).
 
 ## Datasets
-The RGB-D SOD datasets can be downloaded to click Baidu Drive ([Data](https://pan.baidu.com/s/1zFiy7c3P4sb_w0cOVtQucA) (password: 92cc)
+The RGB-D SOD datasets can be downloaded to click Baidu Drive [Data](https://pan.baidu.com/s/1zFiy7c3P4sb_w0cOVtQucA) (password: 92cc)
 
 ## Installation
 python3.6+, pytorch>=1.6, tensorboard
-
-## Download Pre-trained Models
-[Baidu Drive](https://pan.baidu.com/s/1UWnpjNaaCTSUB2sOtJqZng)
-提取码：yd8w
-
-## Config
-```
-sh train_meta_QSFormer.sh
-```
 
 
 ## Citation
 If you find this project useful, please feel free to leave a star and cite our paper:
 ```
-@article{wang2023few,
-  title={Few-Shot Learning Meets Transformer: Unified Query-Support Transformers for Few-Shot Classification},
-  author={Wang, Xixi and Wang, Xiao and Jiang, Bo and Luo, Bin},
-  journal={IEEE Transactions on Circuits and Systems for Video Technology},
-  year={2023},
-  publisher={IEEE}
+@article{wxx2024ijcv,
+  title={MutualFormer: Multi-Modality Representation Learning via Cross-Diffusion Attention},
+  author={Wang, Xixi and Wang, Xiao and Jiang, Bo and Tang, Jin and Luo, Bin},
+  journal={International Journal of Computer Vision},
+  year={2024}
 }
 ```
 
 ## Acknowledgements
-This project is built upon [DeepEMD](https://github.com/icoz69/DeepEMD). We also reference some code from [DETR](https://github.com/facebookresearch/detr). Thanks to the contributors of these great codebases.
+Our proposed MutualFormer is built upon [TransReID](https://github.com/damo-cv/TransReID). We also reference some code from [F3Net](https://github.com/weijun88/F3Net), [FIBER](https://github.com/microsoft/FIBER) and [CMX](https://github.com/huaaaliu/RGBX_Semantic_Segmentation). Thanks to the contributors of these great codebases.
