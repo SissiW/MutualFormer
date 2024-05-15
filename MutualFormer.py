@@ -23,7 +23,7 @@ to_2tuple = _ntuple(2)
 
 def get_S(W_adj):
     '''
-    W_adj: [B, H, N, N] = torch.Size([11, 8, 100, 100])
+    W_adj: [B, H, N, N] 
     '''
     D = torch.pow(W_adj.sum(3).float(), -0.5)
     D = torch.diag_embed(D)
