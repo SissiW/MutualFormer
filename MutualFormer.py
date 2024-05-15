@@ -68,8 +68,8 @@ class PatchEmbed_overlap(nn.Module):
         # FIXME look at relaxing size constraints
         assert H == self.img_size[0] and W == self.img_size[1], \
             f"Input image size ({H}*{W}) doesn't match model ({self.img_size[0]}*{self.img_size[1]})."
-        x = self.proj(x)  # torch.Size([44, 768, 16, 16])
-        x = x.flatten(2).transpose(1, 2) # [64, 256, 768]
+        x = self.proj(x)  
+        x = x.flatten(2).transpose(1, 2) 
         return x
 
 class DropPath(nn.Module):
@@ -123,7 +123,7 @@ class MultiAttention(nn.Module):
         self.proj_drop = nn.Dropout(proj_drop)
 
     def forward(self, x, xrd):
-        B, N, c = x.shape   # torch.Size([44, 257, 768])
+        B, N, c = x.shape   
         C = c // 2
         xr, xd = torch.split(x, C, dim=2)
 
@@ -148,31 +148,31 @@ class MultiAttention(nn.Module):
         I = Parameter(I.cuda()) 
         A = I
 
-        Y = torch.add(attn_r, attn_d)#.softmax(dim=-1)  # torch.Size([11, 8, 100, 100])
+        Y = torch.add(attn_r, attn_d)#.softmax(dim=-1)  
 
         # RGB -- D
         for iter in range(self.max_iter_rd):
-            A_rd = self.alpha * (S_r @ A @ S_d.transpose(-1,-2)) + (1 - self.alpha) * Y  # torch.Size([11, 8, 100, 100])
+            A_rd = self.alpha * (S_r @ A @ S_d.transpose(-1,-2)) + (1 - self.alpha) * Y  
         attn_rd = self.attn_drop(A_rd)
         out_rd = (attn_rd @ vd).transpose(1, 2).reshape(B, N, C)
 
         # D -- RGB
         for iter in range(self.max_iter_dr):
-            A_dr = self.alpha * (S_d @ A @ S_r.transpose(-1,-2)) + (1 - self.alpha) * Y  # torch.Size([11, 8, 100, 100])
+            A_dr = self.alpha * (S_d @ A @ S_r.transpose(-1,-2)) + (1 - self.alpha) * Y 
         attn_dr = self.attn_drop(A_dr)
         out_dr = (attn_dr @ vr).transpose(1, 2).reshape(B, N, C)
 
         out_r = self.proj_r(torch.cat((out_r, out_rd), dim=2))
         out_d = self.proj_d(torch.cat((out_d, out_dr), dim=2))
 
-        qkv = self.qkv(xrd).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)  # torch.Size([3, 44, 12, 257, 64])
-        q, k, v = qkv[0], qkv[1], qkv[2]   # make torchscript happy (cannot use tensor as tuple) torch.Size([44, 12, 257, 64])
+        qkv = self.qkv(xrd).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)  
+        q, k, v = qkv[0], qkv[1], qkv[2]   # make torchscript happy (cannot use tensor as tuple) 
 
-        attn = (q @ k.transpose(-2, -1)) * self.scale  # torch.Size([44, 12, 257, 257])0.0
-        attn = attn.softmax(dim=-1)  # torch.Size([44, 12, 257, 257])
+        attn = (q @ k.transpose(-2, -1)) * self.scale  
+        attn = attn.softmax(dim=-1)  
         attn = self.attn_drop(attn)
 
-        x = (attn @ v).transpose(1, 2).reshape(B, N, C)  # torch.Size([44, 257, 768])
+        x = (attn @ v).transpose(1, 2).reshape(B, N, C)  
         x = self.proj_drop(self.proj(x)) + self.proj_rd(torch.cat((out_r, out_d), dim=2))
 
         return x
@@ -192,7 +192,11 @@ class MutualFormer(nn.Module):
         mlp_hidden_dim = int(dim * mlp_ratio)
         self.mlp = Mlp(in_features=dim, hidden_features=mlp_hidden_dim, act_layer=act_layer, drop=drop)
 
-    def forward(self, x, xrd, h, resize=False):
+    def forward(self, x, xrd, h, resize=False):  
+        '''
+        x: torch.Size([B, N, 2C])
+        xrd: torch.Size([B, N, C])
+        '''
         B, L, C = x.size()
 
         x = xrd + self.drop_path(self.attn(self.norm1(x), self.norm1_rd(xrd)))
